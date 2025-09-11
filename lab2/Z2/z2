@@ -1,0 +1,15 @@
+Програмний код до завдання 2:
+
+from mod import product
+
+def expression(m):
+    z = ((m + 3) / (m - 3)) ** 0.5
+    return z
+
+m =               int(input("ввести число m: "))
+while m == 3: m = int(input("ввести число m: "))
+print("значення z =", expression(m))
+
+n =               int(input("ввести натуральне число n: "))
+while n <= 0: n = int(input("ввести натуральне число n: "))
+print("y= ", product(n))
