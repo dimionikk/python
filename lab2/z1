@@ -1,0 +1,19 @@
+Програмний код до завдання 1:
+
+def expression(m):
+    z = ((m + 3) / (m - 3)) ** 0.5
+    return z
+
+def product(n):
+    dob = 1
+    for i in range(1, n + 1):
+        dob *= 2 * i
+    return dob
+
+m =               int(input("ввести число m: "))
+while m == 3: m = int(input("ввести число m: "))
+print("значення z =", expression(m))
+
+n =               int(input("ввести натуральне число n: "))
+while n <= 0: n = int(input("ввести натуральне число n: "))
+print("y= ", product(n))
