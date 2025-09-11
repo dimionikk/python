@@ -1,0 +1,7 @@
+word1 = input("перше слово: ")
+word2 = input("друге слово: ")
+
+for i in word1:
+    if i in word2 and word1.count(i) == 1 and word2.count(i) == 1:
+        print(i, end="")
+print()
