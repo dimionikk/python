@@ -1,7 +1,6 @@
-Програмний код до завдання 3:
-
 sentence = input("ввести речення: ")
 print("слова, які містять букву о: ")
 for word in sentence.split():
     if 'о' in word:
         print(word)
+
