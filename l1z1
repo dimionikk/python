@@ -1,0 +1,13 @@
+Програмний код до завдання 1:
+
+a=           int(input("ввести число a: "))
+while a<1: a=int(input("ввести число a: "))
+
+b=           int(input("ввести число b: "))
+while b<1: b=int(input("ввести число b: "))
+
+if   a > b:  X = 5 * a + b
+elif a == b: X = -125
+elif a < b:  X = (a - 5) / b
+
+print("результат обчислення X:", X)
