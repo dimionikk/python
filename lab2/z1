@@ -1,17 +1,17 @@
+import math
+
 def expression(m):
-    z = ((m + 3) / (m - 3)) ** 0.5
-    return z
+    return math.sqrt((m + 3) / (m - 3))
 
 def product(n):
-    dob = 1
-    for i in range(1, n + 1):
-        dob *= 2 * i
-    return dob
+    res = 1
+    for i in range(1, n + 1): res *= 2 * i
+    return res
 
-m =               int(input("ввести число m: "))
-while m == 3: m = int(input("ввести число m: "))
+m =                     int(input("введіть число m(m<-3 або m>3): "))
+while -3 <= m <= 3: m = int(input("введіть число m (m<-3 або m>3): "))
 print("значення z =", expression(m))
 
-n =               int(input("ввести натуральне число n: "))
-while n <= 0: n = int(input("ввести натуральне число n: "))
-print("y= ", product(n))
+n =               int(input("введіть натуральне число n: "))
+while n <= 0: n = int(input("введіть натуральне число n: "))
+print("y =", product(n))
