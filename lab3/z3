@@ -1,6 +1,7 @@
-sentence = input("ввести речення: ")
+s = input("ввести речення: ")
 print("слова, які містять букву о: ")
-for word in sentence.split():
-    if 'о' in word:
+for word in s.split():
+    if 'о' in word or 'О' in word:
         print(word)
+
 
