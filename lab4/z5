@@ -1,0 +1,16 @@
+def squares_set():
+    n = int(input("Введіть кількість ел. множини (n<=1000,n>0): "))
+    while n > 1000 or n < 1:
+        n = int(input("Введіть кількість ел. множини (n<=1000,n>0): "))
+
+    squares = set()  
+    for i in range(1, 1001):  
+        squares.add(i**2)      
+
+    squares_list = sorted(list(squares))[:n]
+    
+    print("список квадратів у порядку зростання:", squares_list)
+    squares_set_from_list = set(squares_list)
+    print("множина квадратів:", squares_set_from_list)
+
+squares_set()
