@@ -1,0 +1,12 @@
+def del_duplicat(lst):
+    result = []
+    for item in lst:
+        if item not in result:
+            result.append(item)
+    return result
+
+lst = input("Введіть елементи списку через пробіл: ").split()
+
+new_lst = del_duplicat(lst)
+
+print("Список без повторів:", new_lst)
