@@ -1,0 +1,11 @@
+n = int(input("введіть розмір масиву: "))
+
+arr = []
+print(f"введіть {n} цілих чисел: ")
+for i in range(n):
+    num = input()
+    while not num.lstrip('-').isdigit():  
+        num = input("ввести ціле число: ")
+    arr.append(int(num))
+
+print("додатні ел. масиву:",[i for i in arr if i > 0] )
