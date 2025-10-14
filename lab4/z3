@@ -1,0 +1,11 @@
+def extend_list(lst, left, right):
+    return [left] + lst + [right]
+
+lst = input("Введіть елементи списку через пробіл: ").split()
+
+left  = input("Елемент для додавання зліва: ")
+right = input("Елемент для додавання справа: ")
+
+new_lst = extend_list(lst, left, right)
+
+print("Розширений список:", new_lst)
