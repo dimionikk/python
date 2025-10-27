@@ -1,0 +1,70 @@
+# словник з початковими даними
+weather = {
+    1: {"temp": -3, "rain": 5},
+    2: {"temp": 2, "rain": 3},
+    3: {"temp": -1, "rain": 4},
+    4: {"temp": 5, "rain": 0},
+    5: {"temp": 1, "rain": 7},
+    6: {"temp": -4, "rain": 6}
+}
+
+# функція виводить усі записи словника
+def show_all():
+    for day, data in weather.items():
+        print(f"день {day}: t={data['temp']}°C, опади={data['rain']} мм")
+
+# функція додає новий запис у словник
+def add_record():
+    try:
+        day = int(input("введіть день (1-31): "))
+        if not 1 <= day <= 31: print("День має бути в діапазоні 1-31"); return
+        temp = float(input("введіть температуру: "))
+        rain = float(input("введіть кількість опадів: "))
+        if rain < 0: print("Опади не можуть бути від'ємними"); return       
+        weather[day] = {"temp": temp, "rain": rain}
+        print("запис додано")
+    except ValueError: print("помилка: потрібно вводити числа")
+
+# функція видаляє запис із словника за ключем
+def delete_record():
+    try:
+        day = int(input("введіть день для видалення: "))
+        if weather.pop(day, None) is None: print("помилка: такого дня немає")
+        else: print("запис видалено")
+    except ValueError: print("помилка: день має бути числом")
+
+# функція виводить записи словника відсортовані за днями
+def show_sorted():
+    print("дані за відсортованими днями:")
+    for day in sorted(weather):
+        d = weather[day]
+        print(f"день {day}: t={d['temp']}°C, опади={d['rain']} мм")
+
+# функція підраховує кількість опадів у вигляді дощу і снігу
+def count_rain_snow():
+    rain_sum = 0.0
+    snow_sum = 0.0
+    for d in weather.values():
+        if d["temp"] > 0: rain_sum += d["rain"]
+        else:             snow_sum += d["rain"]
+    print(f"опадів дощем:  {rain_sum} мм")
+    print(f"опадів снігом:  {snow_sum} мм")
+
+#меню для взаємодії з користувачем
+while True:
+    print("меню:")
+    print("1 – переглянути всі записи")
+    print("2 – додати запис")
+    print("3 – видалити запис")
+    print("4 – переглянути записи за відсортованими ключами")
+    print("5 – порахувати опади")
+    print("6 – вийти")
+    choice = input("виберіть дію: ")
+
+    if   choice == "1": show_all()
+    elif choice == "2": add_record()
+    elif choice == "3": delete_record()
+    elif choice == "4": show_sorted()
+    elif choice == "5": count_rain_snow()
+    elif choice == "6": print("вихід з програми...");break
+    else:               print("помилка: невірний вибір меню")
