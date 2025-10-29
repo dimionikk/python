@@ -1,0 +1,51 @@
+# функція відкриває файл і перевіряє помилки
+def Open(name, mode):
+    try: f = open(name, mode, encoding='utf-8')
+    except:  print("файл", name, "не відкрито"); return None
+    else:    print("файл", name, " відкрито");   return f
+
+# задає імена файлів
+file1 = "TF10_1.txt"
+file2 = "TF10_2.txt"
+
+# створює рядки для запису
+lines = [
+    "Роз42робити прогр52аму, яка:234",
+    "створює текстовий файл TF10_1",
+    "із символьних рядків різної довжини;",
+]
+
+# створює перший файл і записує рядки
+f1w = Open(file1, "w")
+if f1w is not None:
+    for ln in lines: f1w.write(ln + "\n")
+    f1w.close()
+
+# відкриває перший для читання і другий для запису
+f1r = Open(file1, "r")
+f2w = Open(file2, "w")
+
+# зчитує з першого файлу, видаляє цифри, записує по 10 символів у другий
+if f1r is not None and f2w is not None:
+    buffer = ""
+    for line in f1r:
+        line = line.rstrip("\n")
+        for ch in line:
+            if not ch.isdigit():
+                buffer += ch
+
+    i = 0
+    while i < len(buffer):
+        blok = buffer[i:i+10]
+        f2w.write(blok + "\n")
+        i += 10
+
+    f1r.close()
+    f2w.close()
+
+# зчитує другий файл і виводить його вміст
+f2r = Open(file2, "r")
+if f2r is not None:
+    for line in f2r:
+        print(line.rstrip("\n"))
+    f2r.close()
