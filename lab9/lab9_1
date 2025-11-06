@@ -1,0 +1,48 @@
+import csv
+
+try:
+    # Відкриття вхідного файлу
+    with open('wb.csv', 'r') as input_file:
+        reader = csv.reader(input_file)
+        
+        # Виведення вмісту файлу
+        print("Вміст файлу:")
+        data_2019 = []
+        for row in reader:
+            print(row)
+            
+            # Збір даних
+            if len(row) >= 5:
+                indicator = row[0]
+                country = row[2]
+                value_str = row[4]
+                
+                # Перевіряємо чи це потрібний показник та чи є числові дані
+                if "Exports of goods and services" in indicator and value_str != "..":
+                    try:
+                        value = float(value_str)
+                        data_2019.append((country, value))
+                    except Exception: continue
+except Exception as e: print("Помилка при читанні файлу")
+
+# Обробка даних та запис результатів
+if 'data_2019' in locals() and data_2019:
+
+    # Пошук найнижчого та найвищого значень
+    min_country, min_value = min(data_2019, key=lambda x: x[1])
+    max_country, max_value = max(data_2019, key=lambda x: x[1])
+
+    print("\nРЕЗУЛЬТАТИ ПОШУКУ:")
+    print(f"Найнижчий показник експорту: {min_country} - {min_value:.3f}%")
+    print(f"Найвищий показник експорту: {max_country} - {max_value:.3f}%")
+
+    # Запис результатів у новий файл
+    try:
+        with open('exports_min_max.csv', 'w', newline='') as output_file:
+            writer = csv.writer(output_file)
+            writer.writerow(['Показник', 'Країна', 'Значення (%)'])
+            writer.writerow(['Мінімальний експорт', min_country, f"{min_value:.3f}"])
+            writer.writerow(['Максимальний експорт', max_country, f"{max_value:.3f}"])
+        print(f"\nРезультати записано у файл 'exports_min_max.csv'")
+    except Exception as e:  print("Помилка запису у файл")
+else: print("Немає даних експорту для обробки")
