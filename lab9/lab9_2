@@ -1,0 +1,119 @@
+import json
+
+# Файли для зберігання даних
+DATA_FILE   = "weather_data.json"
+RESULT_FILE = "weather_result.json"
+
+# Завантаження даних з JSON файлу
+def load_data():
+    try:
+        with open(DATA_FILE, 'r') as f:
+            return json.load(f)
+    except Exception as e:  print("Помилка завантаження даних з JSON файлу")
+
+# Збереження даних у JSON файл
+def save_data(data):
+    with open(DATA_FILE, 'w') as f:
+        json.dump(data, f)
+
+# Функція виводить усі записи
+def show_all():
+    weather = load_data()
+    if not weather: print("Немає даних для відображення"); return
+    for day, data in weather.items():
+        print(f"День {day}: t={data['temp']}°C, опади={data['rain']} мм")
+
+# Функція додає новий запис
+def add_record():
+    weather = load_data()
+    try:
+        day = input("Введіть день (1-31): ")
+        if not day.isdigit() or not 1 <= int(day) <= 31:
+            print("День має бути числом в діапазоні 1-31"); return
+        
+        temp = float(input("Введіть температуру: "))
+        rain = float(input("Введіть кількість опадів: "))
+        if rain < 0: print("Опади не можуть бути від'ємними"); return
+        
+        weather[day] = {"temp": temp, "rain": rain}
+        save_data(weather)
+        print("Запис додано")
+    except ValueError: print("Потрібно вводити числа")
+
+# Функція видаляє запис
+def delete_record():
+    weather = load_data()
+    day = input("Введіть день для видалення: ")
+    if day in weather:
+        del weather[day]
+        save_data(weather)
+        print("Запис видалено")
+    else: print("Такого дня немає")
+
+# Функція підраховує опади за типом
+def count_rain_snow():
+    weather = load_data()
+    rain_sum = 0.0
+    snow_sum = 0.0
+    
+    for data in weather.values():
+        if data["temp"] > 0: rain_sum += data["rain"]
+        else: snow_sum += data["rain"]
+    
+    result = {
+        "rain_mm": rain_sum,
+        "snow_mm": snow_sum
+    }
+    
+    # Зберігаємо результат у файл
+    with open(RESULT_FILE, 'w') as f:
+        json.dump(result, f)
+    
+    print(f"Опадів дощем: {rain_sum} мм")
+    print(f"Опадів снігом: {snow_sum} мм")
+    print(f"Результат збережено у файл {RESULT_FILE}")
+
+# Функція пошуку даних
+def search_data():
+    weather = load_data()
+    if not weather: print("Немає даних для пошуку"); return
+    print("Пошук за:")
+    print("1 - Температура")
+    print("2 - Кількість опадів")
+    choice = input("Виберіть поле для пошуку: ")
+    
+    try:
+        if choice == "1":
+            value = float(input("Введіть температуру для пошуку: "))
+            results = {day: data for day, data in weather.items() if data["temp"] == value}
+            field_name = "температурою"
+        elif choice == "2":
+            value = float(input("Введіть кількість опадів для пошуку: "))
+            results = {day: data for day, data in weather.items() if data["rain"] == value}
+            field_name = "кількістю опадів"
+        else: print("Невірний вибір"); return
+        
+        if results:
+            print(f"Знайдені записи з {field_name} {value}:")
+            for day, data in results.items():
+                print(f"День {day}: t={data['temp']}°C, опади={data['rain']} мм")
+        else: print("Записи не знайдені")      
+    except ValueError:print("Потрібно вводити числа")
+
+while True:
+    print("Меню:")
+    print("1 – Переглянути всі записи")
+    print("2 – Додати запис")
+    print("3 – Видалити запис")
+    print("4 – Порахувати опади")
+    print("5 – Пошук даних")
+    print("6 – Вийти")
+    choice = input("Виберіть дію: ")
+
+    if choice   == "1": show_all()
+    elif choice == "2": add_record()
+    elif choice == "3": delete_record()
+    elif choice == "4": count_rain_snow()
+    elif choice == "5": search_data()
+    elif choice == "6": print("Вихід з програми"); break
+    else:  print("Невірний вибір меню")
