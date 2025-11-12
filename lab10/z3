@@ -1,0 +1,46 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Дані про погоду за тиждень
+weather = {
+    1: {"temp": -3, "rain": 5},
+    2: {"temp": 2, "rain": 3},
+    3: {"temp": -1, "rain": 4},
+    4: {"temp": 5, "rain": 2},
+    5: {"temp": 1, "rain": 3},
+    6: {"temp": -4, "rain": 6}
+}
+
+days = list(weather.keys())               # Список днів тижня
+data = [weather[d]["rain"] for d in days] # Дані для кругової діаграми
+labels = [f"День {d}" for d in days]      # Підписи для секторів
+
+# Функція для відображення відсотків і абсолютного значення
+def func(pct, allvals):
+    absolute = int(np.round(pct/100.*np.sum(allvals)))
+    return f"{pct:.1f}%\n({absolute} мм)"
+
+# Створення фігури та вісі з рівним співвідношенням сторін
+fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+colors = plt.cm.tab10(range(len(days))) # Підбир різних кольорів
+
+# Побудова кругової діаграми
+wedges, texts, autotexts = ax.pie(
+    data,                                # значення для секторів
+    autopct=lambda pct: func(pct, data), # відображення відсотків та абсолютних значень
+    textprops=dict(color="w"),           # колір тексту всередині секторів
+    colors=colors,                       # кольори секторів
+    startangle=90                        # кут першого сектора
+)
+
+# Додаємо легенду з підписами днів
+ax.legend(
+    wedges, labels,     # сектора та підписи
+    title="Дні тижня",  # заголовок легенди
+    loc="center left",  # позиція легенди
+    bbox_to_anchor=(1, 0, 0.5, 1)  # розташування 
+)
+
+plt.setp(autotexts, size=8, weight="bold") # Стиль тексту
+ax.set_title("Розподіл опадів за тиждень") # Заголовок 
+plt.show()
