@@ -9,7 +9,7 @@ def load_data():
     try:
         with open(DATA_FILE, 'r') as f:
             return json.load(f)
-    except Exception as e:  print("Помилка завантаження даних з JSON файлу")
+    except Exception as e:  print("Помилка завантаження даних з JSON файлу");return {}
 
 # Збереження даних у JSON файл
 def save_data(data):
