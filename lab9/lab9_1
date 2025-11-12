@@ -18,7 +18,7 @@ try:
                 value_str = row[4]
                 
                 # Перевіряємо чи це потрібний показник та чи є числові дані
-                if "Exports of goods and services" in indicator and value_str != "..":
+                if indicator.strip() == "Exports of goods and services (% of GDP)" and value_str != "..":
                     try:
                         value = float(value_str)
                         data_2019.append((country, value))
