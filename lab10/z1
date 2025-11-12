@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-x = np.linspace(0, 4, 100)            # Створює масив
+x = np.linspace(0.01, 4, 100)         # Створює масив
 y = np.sin(10*x) * np.sin(3*x) / x**2 # Обчислює y
 
 # Побудова графіка
