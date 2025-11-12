@@ -1,0 +1,18 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 4, 100)            # Створює масив
+y = np.sin(10*x) * np.sin(3*x) / x**2 # Обчислює y
+
+# Побудова графіка
+plt.plot(x, y, label='sin(10x)*sin(3x)/x^2', 
+         color='green', linewidth=2, linestyle='-') 
+
+# Додає назву та підписи осей
+plt.title ('Графік функції у = sin(10x)*sin(3x)/x^2', fontsize=15)
+plt.xlabel('x', fontsize=12, color='blue')
+plt.ylabel('y', fontsize=12, color='blue')
+
+plt.legend()    # Легенда
+plt.grid(True)  # Сітка
+plt.show()      # Відображення графіка
