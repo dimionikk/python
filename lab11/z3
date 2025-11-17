@@ -1,0 +1,61 @@
+import nltk                       # для обробки природної мови
+from nltk.corpus import gutenberg # тексти з Project Gutenberg для аналізу
+from nltk.corpus import stopwords # для фільтрації найпоширеніших слів
+from nltk.probability import FreqDist # для підрахунку частоти слів у тексті
+import matplotlib.pyplot as plt       # для побудови графіків та діаграм
+
+# Завантаження необхідних ресурсів NLTK
+nltk.download('gutenberg')    # тексти Project Gutenberg
+nltk.download('stopwords')    # стоп-слова
+
+# Завантаження тексту як список токенів
+words = gutenberg.words('burgess-busterbrown.txt')  
+
+# Визначення загальної кількості слів
+print(f"Загальна кількість слів у тексті: {len(words)}\n")
+
+# Обчислення частоти слів в оригінальному тексті
+fdist_original = FreqDist(words)
+
+# Вибір 10 найбільш вживаних слів
+top10_original = fdist_original.most_common(10)
+
+# Вивідення найбільш вживаних слів в оригінальному тексті
+print("10 найбільш вживаних слів у тексті:")
+for i, (word, freq) in enumerate(top10_original, 1):
+    print(f"{i}. {word}: {freq}")
+
+# Побудова стовпчастої діаграми для оригінального тексту
+labels, values = zip(*top10_original)
+plt.bar(labels, values, color='skyblue')
+plt.title('10 найбільш вживаних слів у тексті')
+plt.show()
+
+# Приведення всіх слів до нижнього регістру
+words = [w.lower() for w in words]
+
+# Створення списку стоп-слів
+stop_words = set(stopwords.words('english'))
+
+# Видалення стоп-слів і всіх неалфавітних токенів
+filtered_words = [w for w in words if w.isalpha() and w not in stop_words]
+
+# Вивід кількості слів після фільтрації
+print(f"\nКількість слів після фільтрації: {len(filtered_words)}\n")
+
+# Обчислення частоти слів після фільтрації
+fdist_filtered = FreqDist(filtered_words)
+
+# Вибір 10 найбільш вживаних слів після фільтрації
+top10_filtered = fdist_filtered.most_common(10)
+
+# Виведення 10 найбільш вживаних слів після фільтрації
+print("10 найбільш вживаних слів у тексті після фільтрації:")
+for i, (word, freq) in enumerate(top10_filtered, 1):
+    print(f"{i}. {word}: {freq}")
+
+# Побудова стовпчастої діаграми після фільтрації
+labels, values = zip(*top10_filtered)
+plt.bar(labels, values, color='lightgreen')
+plt.title('10 найбільш вживаних слів (після фільтрації)')
+plt.show()
