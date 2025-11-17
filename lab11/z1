@@ -1,0 +1,46 @@
+import pandas as pd
+
+# Словник 
+weather = {
+    1: {"temp": -3, "rain": 5},
+    2: {"temp": 2, "rain": 3},
+    3: {"temp": -1, "rain": 4},
+    4: {"temp": 5, "rain": 0},
+    5: {"temp": 1, "rain": 7},
+    6: {"temp": -4, "rain": 6}
+}
+
+# Перетворення словника на DataFrame
+df = pd.DataFrame.from_dict(weather, orient='index').reset_index().rename(columns={'index': 'day'})
+
+# Вивід словника на екран
+print("Вміст словника:")
+for k, v in weather.items(): print(k, v)
+
+# Базовий аналіз
+print("Базовий аналіз словника перетвореного на DataFrame\n")
+print("\nПерші 3 рядки :\n", df.head(3), "\n")
+print("Типи даних:\n", df.dtypes, "\n")
+print("Кількість рядків і стовпців:\n", df.shape, "\n")
+print("Описова статистика:\n", df.describe(), "\n")
+
+# Новий стовпець який містить розрахункові значення
+df['is_rainy'] = df['rain'] > 0
+
+# Фільтраці днів де був дощ
+rainy_days = df[df['is_rainy']]
+print("Дні з опадами:\n", rainy_days, "\n")
+
+# Сортування за спаданням температури
+sorted_df = df.sort_values(by='temp', ascending=False)
+print("DataFrame, відсортований за спаданням температури:\n", sorted_df, "\n")
+
+# Групування та знаходження середнього значення
+group_mean = df.groupby('is_rainy').mean()
+print("Середні значення по групах:\n", group_mean, "\n")
+
+# Додаткові операції агрегації
+max_rain = df['rain'].max()        # максимальна кількість опадів
+unique_days = df['day'].nunique()  # кількість унікальних днів
+print("Максимальна кількість опадів:", max_rain)
+print("Кількість унікальних днів:", unique_days)
