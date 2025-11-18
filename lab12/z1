@@ -1,0 +1,185 @@
+# Імпорт необхідних бібліотек
+import nltk
+from nltk.corpus import stopwords              # Стоп-Слова
+from nltk.tokenize import word_tokenize        # Токенізація
+from nltk.stem import PorterStemmer            # Стемінг
+from wordcloud import WordCloud                # Хмара Слів
+import matplotlib.pyplot as plt                # Графіка
+import pandas as pd                            # Робота з таблицями
+from collections import Counter                # Підрахунок Частот
+
+# Перевірка наявності потрібних ресурсів NLTK
+try:                nltk.data.find('tokenizers/punkt')
+except LookupError: nltk.download('punkt')
+try:                nltk.data.find('corpora/stopwords')
+except LookupError: nltk.download('stopwords')
+
+
+# Читає текст із файлу
+def read_file(file_path):
+    try:
+        # Відкриває файл у режимі читання з кодуванням UTF-8 та ігнорує помилки
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as file: text = file.read()
+        
+        # Перевіряє, чи файл порожній
+        if len(text.strip()) == 0:print(f"Файл '{file_path}' порожній"); return None
+        print(f"Файл завантажено. Розмір тексту: {len(text)} символів"); return text
+    # Обробка помилки, якщо файл не знайдено або інші помилки при читанні
+    except FileNotFoundError:print(f"Файл '{file_path}' не знайдено");   return None
+    except Exception as e:   print(f"Помилка при читанні файлу: {e}");   return None
+
+
+# Очищення тексту. Токенізація, фільтрація та стемінг
+def clean_text(text, use_stemming=True):
+    print("Початок очищення тексту")
+
+    # Токенізація та приведення до нижнього регістру
+    tokens = word_tokenize(text.lower())      
+    print(f"Кількість токенів після токенізації: {len(tokens)}")
+
+    # Завантаження стоп-слів та створення стемера
+    stop_words = set(stopwords.words('english'))
+    porter = PorterStemmer() if use_stemming else None
+
+    cleaned_tokens = []
+    for token in tokens:
+        if not token.isalpha():  continue # Пропуск неалфавітних символів
+        if len(token) <= 2:      continue # Пропуск коротких слів
+        if token in stop_words:  continue # Пропуск стоп-слів
+        if token in {"n't", "s", "re", "ve", "ll", "d", "''", "``", "’s", "’t"}: 
+            continue # Пропуск часток
+        if use_stemming: 
+            token = porter.stem(token) # Застосування стемінгу
+        cleaned_tokens.append(token)   # Додавання очищеного токена
+    print(f"Кількість токенів після очищення: {len(cleaned_tokens)}"); 
+    return cleaned_tokens
+
+
+# Розрахунок частоти слів
+def calculate_frequency(tokens):
+    print("Розрахунок частоти слів...")
+    counter = Counter(tokens)                # Рахує кількість появ кожного слова      
+    sorted_pairs = counter.most_common()     # Повертає список у порядку спадання   
+    sorted_frequencies = dict(sorted_pairs)  # Перетворення списку пар у словник 
+    print(f"Знайдено унікальних слів: {len(sorted_frequencies)}")
+    return sorted_frequencies
+
+
+# Генерація та збереження хмари слів
+def generate_wordcloud(frequencies, output_path="wordcloud.png",
+                       width=800, height=600, background_color='white'):
+    try:
+        print("Генерація хмари слів")
+        # Створення об'єкта WordCloud із заданими параметрами
+        wordcloud = WordCloud(
+            width=width,                         # Ширина зображення
+            height=height,                       # Висота зображення
+            background_color=background_color,   # Колір фону
+            max_words=200,                       # Максимум слів на зображенні
+            colormap='viridis'                   # Колірна схема
+        ).generate_from_frequencies(frequencies) # Генерація на основі частот
+
+        # Візуалізація хмари слів
+        plt.figure(figsize=(width / 100, height / 100))  # Розмір зображення
+        plt.imshow(wordcloud, interpolation='bilinear')  # Відображає хмару слів
+        plt.axis('off')                                  # Вимикає осі
+        plt.title('Хмара слів', fontsize=16)             # Заголовок
+        plt.savefig(output_path, dpi=300, bbox_inches='tight') # Збереження зображення
+        plt.show()                                       # Показ зображення
+        print(f"Хмару слів збережено як '{output_path}'"); return True
+    except Exception as e: print(f"Помилка при генерації хмари слів: {e}"); return False
+
+
+# Збереження результатів у CSV або TXT
+def save_results(frequencies, output_file="word_frequencies", format="csv"):
+    try:
+        # Якщо формат CSV то створює таблицю та зберігає за допомогою pandas
+        if format.lower() == "csv":
+            filename = f"{output_file}.csv"
+            df = pd.DataFrame(list(frequencies.items()),
+                              columns=['Word', 'Frequency'])   # Формування DataFrame
+            df.to_csv(filename, index=False, encoding='utf-8') # Запис у CSV
+
+        # Якщо формат TXT то записує у текстовий файл
+        elif format.lower() == "txt":
+            filename = f"{output_file}.txt"
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write("Word\tFrequency\n")            # Заголовок таблиці
+                for word, freq in frequencies.items():
+                    f.write(f"{word}\t{freq}\n")        # Запис кожного слова та його частоти
+        else: print("Невірний формат файлу");               return False
+        print(f"Результати збережено у файл '{filename}'"); return True
+    except Exception as e:  print(f"Помилка при збереженні: {e}"); return False
+
+
+# Виведення топ-N слів
+def display_top_words(frequencies, top_n=20):
+    print(f"\nСписок {top_n} найчастіших слів:")
+
+    # Перетворення словника у список пар. Вибір перших top_n елементів
+    top_words = list(frequencies.items())[:top_n]  
+
+    # Виведення слів у форматованому вигляді з нумерацією
+    for i, (word, freq) in enumerate(top_words, 1):
+        print(f"{i:2d}. {word:<18} {freq:>6}")
+
+# Запит шляху до файлу та зчитування тексту
+text = None
+while True:
+    file_path = input("Введіть шлях до текстового файлу: ").strip()
+    if not file_path: print("Введіть шлях до файлу"); continue
+    text = read_file(file_path)  
+    if text is not None: break
+
+
+if text is None: print("Не вдалося отримати текст")
+else:
+    # Очищення тексту, токенізація, фільтрація та стемінг
+    cleaned_tokens = clean_text(text, use_stemming=True)
+
+    # Перевірка, чи залишились слова після очищення
+    if not cleaned_tokens: print("Після очищення не залишилось слів")
+
+    else:
+        # Розрахунок частоти слів
+        frequencies = calculate_frequency(cleaned_tokens) 
+
+        # Запит на введення кількості слів для відображення
+        while True:
+            top_input = input("\nВведіть кількість слів які необхідно відобразити: ").strip()
+            try:
+                top_n = int(top_input)
+                if top_n <= 0: print("Число має бути > 0"); continue
+                break
+            except ValueError: print("Неправильне число")
+
+        # Захист від введення більшої кількості слів ніж є у словнику
+        unique_count = len(frequencies)
+        if top_n > unique_count:
+            print(f"Є тільки {unique_count} унікальних слів")
+            top_n = unique_count
+
+        # Виведення слів
+        display_top_words(frequencies, top_n)
+
+        # Запит назви файлу для збереження хмари слів
+        output_name = input("Назва для збереження хмари: ").strip()
+        if not output_name: output_name = "wordcloud"
+
+        # Генерація та збереження хмари слів
+        generate_wordcloud(frequencies, f"{output_name}.png")
+
+# Запит про збереження частоти слів у файл
+while True:
+    save_option = input("\nЗберегти список частоти всіх слів? (так/ні): ").strip().lower()
+    if save_option == 'так':
+        # Вибір формату для збереження
+        while True:
+            format_choice = input("Формат (csv/txt): ").strip().lower()
+            if format_choice in ('csv', 'txt'):
+                save_results(frequencies, "word_frequencies", format_choice)
+                break
+            print("Введіть 'csv' або 'txt'")
+        break
+    if save_option == 'ні': print("Результати не збережено"); break
+    print("Введіть 'так' або 'ні'")
